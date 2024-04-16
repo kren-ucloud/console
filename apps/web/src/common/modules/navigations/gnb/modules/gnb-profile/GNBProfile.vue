@@ -40,6 +40,7 @@ const route = useRoute();
 const router = useRouter();
 
 const state = reactive({
+
     userIcon: computed(() => {
         if (state.isDomainOwner) return 'img_avatar_root-account';
         if (state.hasDomainRole) return 'img_avatar_admin';
@@ -128,6 +129,23 @@ const handleClickSignOut = async () => {
     };
     await router.push(res);
 };
+
+
+// 추가코드
+const hasInvoicePermission = computed(() => {
+    const userRoles = store.state.user.roles;
+    console.log(userRoles);
+    return userRoles && userRoles.some((role) => role.name === 'Project Viewer');
+    // invoice page가 보여지게 하고 싶은 롤을 입력
+});
+const handleClickSubMenu = () => {
+    const valueFromLocalStorage = localStorage.getItem('spaceConnector/accessToken');
+    if (valueFromLocalStorage) {
+        console.log(valueFromLocalStorage);
+        window.location.href = `http://localhost:3000?key=${encodeURIComponent(valueFromLocalStorage)}`;
+    }
+};
+// 추가코드
 </script>
 
 <template>
@@ -245,6 +263,23 @@ const handleClickSignOut = async () => {
                     </router-link>
                 </div>
             </template>
+
+            <!--추가코드-->
+            <template v-if="hasInvoicePermission">
+                <p-divider />
+                <div class="sub-menu-wrapper"
+                     @click.native="handleClickSubMenu"
+                >
+                    <router-link class="sub-menu"
+                                 :to="{name: INFO_ROUTE.NOTICE._NAME}"
+                                 @click.native="handleClickSubMenu"
+                    >
+                        <span>invoice</span>
+                    </router-link>
+                </div>
+            </template>
+            <!--추가코드-->
+
             <template v-if="state.hasPermission && !state.isDomainOwner">
                 <p-divider />
                 <div class="sub-menu-wrapper">
