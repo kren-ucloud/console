@@ -7,6 +7,10 @@ public/config/*
 dist
 .out
 
+# NPM
+node_modules/
+node_modules.nosync/
+
 # Tests
 coverage/
 

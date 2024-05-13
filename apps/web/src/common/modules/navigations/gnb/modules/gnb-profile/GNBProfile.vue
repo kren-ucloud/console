@@ -135,7 +135,8 @@ const handleClickSignOut = async () => {
 const hasInvoicePermission = computed(() => {
     const userRoles = store.state.user.roles;
     // console.log(store.state.user);
-    const INVOICE_ROLE = import.meta.env.VITE_INVOICE_ROLE || 'Domain Admin';
+    // console.log(config.get('INVOICE_URL'));
+    const INVOICE_ROLE = config.get('INVOICE_ROLE');
     return userRoles && userRoles.some((role) => role.name === INVOICE_ROLE);
     // invoice page가 보여지게 하고 싶은 롤을 입력
 });
@@ -154,7 +155,7 @@ const handleClickSubMenu = () => {
         const userId = store.state.user.userId;
         const encodedUserId = encodeURIComponent(userId);
         const encodedAccessToken = encodeURIComponent(valueFromLocalStorage);
-        const BASE_URL = import.meta.env.VITE_INVOICE_URL || 'http://localhost:3000';
+        const BASE_URL = config.get('INVOICE_URL');
         const url = `${BASE_URL}?key=${encodedAccessToken}&userId=${encodedUserId}`;
         window.open(url, '_blank');
     }
