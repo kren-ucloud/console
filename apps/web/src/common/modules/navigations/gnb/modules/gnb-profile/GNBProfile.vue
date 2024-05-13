@@ -134,15 +134,29 @@ const handleClickSignOut = async () => {
 // 추가코드
 const hasInvoicePermission = computed(() => {
     const userRoles = store.state.user.roles;
-    console.log(userRoles);
-    return userRoles && userRoles.some((role) => role.name === 'Project Viewer');
+    // console.log(store.state.user);
+    const INVOICE_ROLE = import.meta.env.VITE_INVOICE_ROLE || 'Domain Admin';
+    return userRoles && userRoles.some((role) => role.name === INVOICE_ROLE);
     // invoice page가 보여지게 하고 싶은 롤을 입력
+});
+const languageText = computed(() => {
+    const language = store.state.user.language;
+    if (language === 'en') {
+        return 'Invoice';
+    } if (language === 'ko') {
+        return '청구서';
+    }
+    return 'Invoice'; // 기본값
 });
 const handleClickSubMenu = () => {
     const valueFromLocalStorage = localStorage.getItem('spaceConnector/accessToken');
     if (valueFromLocalStorage) {
-        console.log(valueFromLocalStorage);
-        window.location.href = `http://localhost:3000?key=${encodeURIComponent(valueFromLocalStorage)}`;
+        const userId = store.state.user.userId;
+        const encodedUserId = encodeURIComponent(userId);
+        const encodedAccessToken = encodeURIComponent(valueFromLocalStorage);
+        const BASE_URL = import.meta.env.VITE_INVOICE_URL || 'http://localhost:3000';
+        const url = `${BASE_URL}?key=${encodedAccessToken}&userId=${encodedUserId}`;
+        window.open(url, '_blank');
     }
 };
 // 추가코드
@@ -267,15 +281,12 @@ const handleClickSubMenu = () => {
             <!--추가코드-->
             <template v-if="hasInvoicePermission">
                 <p-divider />
-                <div class="sub-menu-wrapper"
-                     @click.native="handleClickSubMenu"
-                >
-                    <router-link class="sub-menu"
-                                 :to="{name: INFO_ROUTE.NOTICE._NAME}"
-                                 @click.native="handleClickSubMenu"
+                <div class="sub-menu-wrapper">
+                    <button class="sub-menu"
+                            @click="handleClickSubMenu"
                     >
-                        <span>invoice</span>
-                    </router-link>
+                        <span>{{ languageText }}</span>
+                    </button>
                 </div>
             </template>
             <!--추가코드-->
