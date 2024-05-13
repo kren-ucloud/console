@@ -31,9 +31,7 @@ The documentation for the Cloudforet Console is located under the [docs](./docs)
 
 To run the Web Console, you need follow the steps below.
 
-
-to set env in docker build command, use
-**docker build --build-arg VITE_INVOICE_URL=http://example.com --build-arg VITE_INVOICE_ROLE=Manager -t your-image-name .**
+**VITE_INVOICE_URL=http://example.com VITE_INVOICE_ROLE="role name" npm run start:web**
 "VITE_INVOICE_URL=http://localhost:3000" "VITE_INVOICE_ROLE=Domain Admin" as default
 
 
