@@ -40,6 +40,7 @@ const route = useRoute();
 const router = useRouter();
 
 const state = reactive({
+
     userIcon: computed(() => {
         if (state.isDomainOwner) return 'img_avatar_root-account';
         if (state.hasDomainRole) return 'img_avatar_admin';
@@ -128,6 +129,38 @@ const handleClickSignOut = async () => {
     };
     await router.push(res);
 };
+
+
+// 추가코드
+const hasInvoicePermission = computed(() => {
+    const userRoles = store.state.user.roles;
+    // console.log(store.state.user);
+    // console.log(config.get('INVOICE_URL'));
+    const INVOICE_ROLE = config.get('INVOICE_ROLE');
+    return userRoles && userRoles.some((role) => role.name === INVOICE_ROLE);
+    // invoice page가 보여지게 하고 싶은 롤을 입력
+});
+const languageText = computed(() => {
+    const language = store.state.user.language;
+    if (language === 'en') {
+        return 'Invoice';
+    } if (language === 'ko') {
+        return '청구서';
+    }
+    return 'Invoice'; // 기본값
+});
+const handleClickSubMenu = () => {
+    const valueFromLocalStorage = localStorage.getItem('spaceConnector/accessToken');
+    if (valueFromLocalStorage) {
+        const userId = store.state.user.userId;
+        const encodedUserId = encodeURIComponent(userId);
+        const encodedAccessToken = encodeURIComponent(valueFromLocalStorage);
+        const BASE_URL = config.get('INVOICE_URL');
+        const url = `${BASE_URL}?key=${encodedAccessToken}&userId=${encodedUserId}`;
+        window.open(url, '_blank');
+    }
+};
+// 추가코드
 </script>
 
 <template>
@@ -245,6 +278,20 @@ const handleClickSignOut = async () => {
                     </router-link>
                 </div>
             </template>
+
+            <!--추가코드-->
+            <template v-if="hasInvoicePermission">
+                <p-divider />
+                <div class="sub-menu-wrapper">
+                    <button class="sub-menu"
+                            @click="handleClickSubMenu"
+                    >
+                        <span>{{ languageText }}</span>
+                    </button>
+                </div>
+            </template>
+            <!--추가코드-->
+
             <template v-if="state.hasPermission && !state.isDomainOwner">
                 <p-divider />
                 <div class="sub-menu-wrapper">
